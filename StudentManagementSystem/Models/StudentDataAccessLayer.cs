@@ -1,0 +1,116 @@
+﻿using StudentManagementSystem.Utility;
+using System.Data;
+using System.Data.SqlClient;
+using System.Configuration;
+using System;
+
+
+namespace StudentManagementSystem.Models
+{
+    public class StudentDataAccessLayer
+    {
+        string connectionString = ConnectionString.CName;
+        public IEnumerable<Stiudent> GetAllStudent()
+        {
+            List<Stiudent> lstStudent = new List<Stiudent>();
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spGetAllStudent", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    Stiudent student = new Stiudent();
+                    student.Id = Convert.ToInt32(rdr["Id"]);
+                    student.FirstName = rdr["FirstName"].ToString();
+                    student.LastName = rdr["LastName"].ToString();
+                    student.Email = rdr["Email"].ToString();
+                    student.Mobile = rdr["Mobile"].ToString();
+                    student.Address = rdr["Address"].ToString();
+
+                    lstStudent.Add(student);
+                }
+                con.Close();
+            }
+            return lstStudent;
+        }
+        public void AddStudent(Stiudent student)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spAddStudent", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@FirstName", student.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", student.LastName);
+                cmd.Parameters.AddWithValue("@Email", student.Email);
+                cmd.Parameters.AddWithValue("@Mobile", student.Mobile);
+                cmd.Parameters.AddWithValue("@Address", student.Address);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
+
+        public void UpdateStudent(Stiudent student)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spUpdateStudent", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+
+                cmd.Parameters.AddWithValue("@Id", student.Id);
+                cmd.Parameters.AddWithValue("@FirstName", student.FirstName);
+                cmd.Parameters.AddWithValue("@LastName", student.LastName);
+                cmd.Parameters.AddWithValue("@Email", student.Email);
+                cmd.Parameters.AddWithValue("@Mobile", student.Mobile);
+                cmd.Parameters.AddWithValue("@Address", student.Address);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
+
+        public Stiudent GetStudentData(int? id)
+        {
+            Stiudent student = new Stiudent();
+
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                string sqlQuery = "SELECT * FROM Student WHERE Id= " + id;
+                SqlCommand cmd = new SqlCommand(sqlQuery, con);
+                con.Open();
+                SqlDataReader rdr = cmd.ExecuteReader();
+
+                while (rdr.Read())
+                {
+                    student.Id = Convert.ToInt32(rdr["Id"]);
+                    student.FirstName = rdr["FirstName"].ToString();
+                    student.LastName = rdr["LastName"].ToString();
+                    student.Email = rdr["Email"].ToString();
+                    student.Mobile = rdr["Mobile"].ToString();
+                    student.Address = rdr["Address"].ToString();
+                }
+            }
+            return student;
+        }
+
+        public void DeleteStudent(int? id)
+        {
+            using (SqlConnection con = new SqlConnection(connectionString))
+            {
+                SqlCommand cmd = new SqlCommand("spDeleteStudent", con);
+                cmd.CommandType = CommandType.StoredProcedure;
+                cmd.Parameters.AddWithValue("@Id", id);
+                con.Open();
+                cmd.ExecuteNonQuery();
+                con.Close();
+            }
+        }
+
+    }
+
+
+}
