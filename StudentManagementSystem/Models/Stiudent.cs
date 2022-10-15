@@ -6,13 +6,13 @@ namespace StudentManagementSystem.Models
     {
         public int Id { set; get; }
         [Required]
-        public string? FirstName { set; get; }
+        public string FirstName { set; get; }
         [Required]
-        public string? LastName { set; get; }
+        public string LastName { set; get; }
         [Required]
-        public string? Email { set; get; }
+        public string Email { set; get; }
         [Required]
-        public string? Mobile { set; get; }
-        public string? Address { set; get; }
+        public string Mobile { set; get; }
+        public string Address { set; get; }
     }
 }
